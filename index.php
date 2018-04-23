@@ -3,8 +3,11 @@
 require_once __DIR__ . "/vendor/autoload.php";
 
 use components\App;
+use Dotenv\Dotenv;
 use Psr\Http\Message\ResponseInterface;
 
+
+(new Dotenv(__DIR__))->load();
 
 $app = new App();
 

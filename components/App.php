@@ -30,7 +30,6 @@ class App
 
     public function __construct()
     {
-        (new \Dotenv\Dotenv(__DIR__ . '/..'))->load();
         $config = Setup::createAnnotationMetadataConfiguration([__DIR__ . "/entries"], true);
         $this->container = new Container();
         $this->container->bind('log', new Logger('app'));
