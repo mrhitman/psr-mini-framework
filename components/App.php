@@ -15,6 +15,12 @@ use Zend\Diactoros\ServerRequestFactory;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
+/**
+ * Class App
+ * @property Logger $log
+ * @property EntityManager $entityManager
+ * @package components
+ */
 class App
 {
 
