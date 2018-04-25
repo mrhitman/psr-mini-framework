@@ -11,12 +11,22 @@ use Psr\Http\Message\ResponseInterface;
 
 $app = new App();
 
-$app->add(function ($request, ResponseInterface $response, $next) {
-    $next($request, $response);
+$app->use(function ($request, ResponseInterface $response, $next) use ($app) {
+    $app->log->info("middleware");
+    $next();
 });
 
 $app->get('/', function ($request, ResponseInterface $response) {
-    $response->getBody()->write("ggasd");
+    $response->getBody()->write(<<<HTML
+    <html>
+      <head>
+      </head>
+      <body>
+        example
+      </body>
+    </html>
+HTML
+);
 });
 
 $app->get('/test/{id:\d+}', function ($request, ResponseInterface $response, array $args) {

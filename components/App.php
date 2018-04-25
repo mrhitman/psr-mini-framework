@@ -32,8 +32,8 @@ class App
     {
         $config = Setup::createAnnotationMetadataConfiguration([__DIR__ . "/entries"], true);
         $this->container = new Container();
-        $this->container->bind('log', new Logger('app'));
-        $this->container->bind(
+        $this->container->instance('log', new Logger('app'));
+        $this->container->instance(
             'entityManager',
             EntityManager::create([
                 'driver' => 'pdo_mysql',
@@ -50,18 +50,6 @@ class App
         if ($this->container->has($name)) {
             return $this->container->get($name);
         }
-    }
-
-    public function add(callable $middleware)
-    {
-        if (!$this->tip) {
-            $this->tip = function ($request, $response) {
-            };
-        }
-        $next = $this->tip;
-        $this->tip = function ($request, $response) use ($middleware, $next) {
-            call_user_func($middleware, $request, $response, $next);
-        };
     }
 
     public function route($method, $pattern, callable $handler)
@@ -81,6 +69,19 @@ class App
     public function post($pattern, callable $handler)
     {
         $this->route('post', $pattern, $handler);
+    }
+
+    public function use(callable $middleware)
+    {
+        $current = $this->tip;
+        $this->tip = function ($request, $response) use ($middleware, $current) {
+            $next = function () use ($request, $reponse, $current) {
+                if ($current) {
+                    call_user_func($current, $request, $response);
+                }
+            };
+            call_user_func($middleware, $request, $response, $next);
+        };
     }
 
     public function run()
