@@ -5,15 +5,12 @@ namespace components;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
-use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slince\Di\Container;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Server;
 use Zend\Diactoros\ServerRequestFactory;
-use Doctrine\ORM\Tools\Setup;
-use Doctrine\ORM\EntityManager;
 
 /**
  * Class App
@@ -30,7 +27,6 @@ class App
 
     public function __construct()
     {
-        $config = Setup::createAnnotationMetadataConfiguration([__DIR__ . "/entries"], true);
         $this->container = new Container();
     }
 
@@ -89,7 +85,7 @@ class App
             [$status, $handler, $vars] = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
             switch ($status) {
                 case Dispatcher::NOT_FOUND:
-                    $response->getBody()->write($this->render("views/404.php"));
+                    $response->getBody()->write($this->twig->render("404.php"));
                     break;
                 case Dispatcher::METHOD_NOT_ALLOWED:
                     throw new \HttpException("Not allowed", 405);
@@ -101,12 +97,5 @@ class App
 
         }, $request, $response);
         $server->listen();
-    }
-
-    protected function render($name)
-    {
-        ob_start();
-        require_once($name);
-        return ob_get_clean();
     }
 }
