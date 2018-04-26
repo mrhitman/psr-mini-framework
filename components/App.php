@@ -25,9 +25,18 @@ class App
     protected $tip;
     public $container;
 
-    public function __construct()
+    public function __construct($components)
     {
         $this->container = new Container();
+        foreach ($components as $name => $config) {
+            $class = $config['class'];
+            unset($config['class']);
+            if (is_callable($class)) {
+                $this->container->instance($name, $class(...array_values($config)));
+            } else {
+                $this->container->instance($name, new $class(...array_values($config)));
+            }
+        }
     }
 
     public function __get($name)
