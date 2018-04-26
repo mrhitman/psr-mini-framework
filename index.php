@@ -11,6 +11,16 @@ use Psr\Http\Message\ResponseInterface;
 
 $app = new App();
 
+$app->container->instance('log', new Logger('app'));
+$app->container->instance('entityManager', EntityManager::create([
+        'driver' => 'pdo_mysql',
+        'host' => getenv('DB_HOST'),
+        'user' => getenv('DB_USER'),
+        'password' => getenv('DB_PASSWORD'),
+        'dbname' => getenv('DB_NAME'),
+    ], $config)
+);
+
 $app->use(function ($request, ResponseInterface $response, $next) use ($app) {
     $app->log->info("middleware");
     $next();

@@ -26,23 +26,12 @@ class App
 
     protected $routes = [];
     protected $tip;
-    protected $container;
+    public $container;
 
     public function __construct()
     {
         $config = Setup::createAnnotationMetadataConfiguration([__DIR__ . "/entries"], true);
         $this->container = new Container();
-        $this->container->instance('log', new Logger('app'));
-        $this->container->instance(
-            'entityManager',
-            EntityManager::create([
-                'driver' => 'pdo_mysql',
-                'host' => getenv('DB_HOST'),
-                'user' => getenv('DB_USER'),
-                'password' => getenv('DB_PASSWORD'),
-                'dbname' => getenv('DB_NAME'),
-            ], $config)
-        );
     }
 
     public function __get($name)
